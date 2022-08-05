@@ -9,7 +9,7 @@ import java.io.IOException;
  * @program: rpc-netty
  * @Date: 2022/8/5 0:27
  * @Author: 阿左不是蜗牛
- * @Description: 注册中心，服务暴露、发现、下线等
+ * @Description: 注册中心相关api: 服务暴露、发现、下线等
  */
 public interface RegistryService {
 
