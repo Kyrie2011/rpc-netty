@@ -19,6 +19,7 @@ public class ZookeeperRegistryService implements RegistryService{
     @Override
     public void register(ServiceMeta serviceMeta) throws Exception {
 
+
     }
 
     @Override

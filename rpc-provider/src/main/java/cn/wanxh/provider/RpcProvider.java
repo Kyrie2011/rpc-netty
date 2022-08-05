@@ -2,6 +2,9 @@ package cn.wanxh.provider;
 
 import cn.wanxh.core.RpcServiceHelper;
 import cn.wanxh.core.ServiceMeta;
+import cn.wanxh.codec.CustomRpcDecoder;
+import cn.wanxh.codec.CustomRpcEncoder;
+import cn.wanxh.handler.RpcRequestHandler;
 import cn.wanxh.provider.annotation.RpcService;
 import cn.wanxh.registry.RegistryService;
 import io.netty.bootstrap.ServerBootstrap;
@@ -103,8 +106,11 @@ public class RpcProvider implements InitializingBean, BeanPostProcessor {
                             ChannelPipeline pipeline = socketChannel.pipeline();
                             // 增加handler
                             //1. 请求解码
+                           pipeline.addLast(new CustomRpcDecoder());
                             //2. 响应编码
+                            pipeline.addLast(new CustomRpcEncoder());
                             //3. 请求处理
+                            pipeline.addLast(new RpcRequestHandler());
                         }
                     }).childOption(ChannelOption.SO_KEEPALIVE, true);
             ChannelFuture channelFuture = serverBootstrap.bind(this.serviceAddress, this.servicePort).sync();
