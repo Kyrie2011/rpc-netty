@@ -19,6 +19,10 @@
             <groupId>cn.wanxh</groupId>
             <artifactId>rpc-protocol</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.wanxh</groupId>
+            <artifactId>rpc-registry</artifactId>
+        </dependency>
     </dependencies>
 
     <properties>

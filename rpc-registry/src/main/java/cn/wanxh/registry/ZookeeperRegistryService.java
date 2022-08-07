@@ -12,7 +12,7 @@ import java.io.IOException;
  */
 public class ZookeeperRegistryService implements RegistryService{
 
-    public ZookeeperRegistryService(String registryAddr){
+    public ZookeeperRegistryService(String registryAddress){
 
     }
 
@@ -28,7 +28,7 @@ public class ZookeeperRegistryService implements RegistryService{
     }
 
     @Override
-    public ServiceMeta discovery(String serviceName, int invokerHashCode) throws Exception {
+    public ServiceMeta discovery(String serviceKey, int invokerHashCode) throws Exception {
         return null;
     }
 

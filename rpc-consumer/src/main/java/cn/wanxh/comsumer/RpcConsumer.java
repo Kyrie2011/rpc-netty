@@ -2,11 +2,14 @@ package cn.wanxh.comsumer;
 
 import cn.wanxh.codec.CustomRpcDecoder;
 import cn.wanxh.codec.CustomRpcEncoder;
+import cn.wanxh.core.RpcRequest;
+import cn.wanxh.core.RpcServiceHelper;
+import cn.wanxh.core.ServiceMeta;
 import cn.wanxh.handler.RpcResponseHandler;
+import cn.wanxh.protocol.CustomRpcProtocol;
+import cn.wanxh.registry.RegistryService;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -42,6 +45,32 @@ public class RpcConsumer {
 
                     }
                 });
+
+    }
+
+    public void sendRequest(CustomRpcProtocol<RpcRequest> protocol, RegistryService registryService) throws Exception{
+        RpcRequest request = protocol.getMsgBody();
+        final Object[] params = request.getParams();
+        final String serviceKey = RpcServiceHelper.buildServiceKey(request.getClassName(), request.getServiceVersion());
+        int invokeHashCode = params.length > 0 ? params[0].hashCode() : serviceKey.hashCode();
+        final ServiceMeta serviceMeta = registryService.discovery(serviceKey, invokeHashCode);
+
+        if (serviceMeta != null) {
+            final ChannelFuture future = bootstrap.connect(serviceMeta.getServiceAddress(), serviceMeta.getServicePort()).sync();
+            future.addListener((ChannelFutureListener) arg0-> {
+                if (future.isSuccess()){
+                    log.info("connect rpc server {} on port {} success.", serviceMeta.getServiceAddress(), serviceMeta.getServicePort());
+                }else{
+                    log.error("connect rpc server {} on port {} failed.", serviceMeta.getServiceAddress(), serviceMeta.getServicePort());
+                    future.cause().printStackTrace();
+                    eventLoopGroup.shutdownGracefully();
+                }
+
+            });
+            future.channel().writeAndFlush(protocol);
+
+        }
+
 
     }
 
