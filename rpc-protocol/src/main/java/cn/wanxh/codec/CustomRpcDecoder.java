@@ -81,7 +81,7 @@ public class CustomRpcDecoder extends ByteToMessageDecoder {
                     out.add(responseMsg);
                 }
                 break;
-
+            // TODO
             case HEARTBEAT:
                 break;
         }

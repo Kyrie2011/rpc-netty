@@ -63,8 +63,9 @@ public class RpcProvider implements InitializingBean, BeanPostProcessor {
                 serviceMeta.setServiceName(serviceName);
                 serviceMeta.setServiceVersion(serviceVersion);
 
-                serviceRegistry.register(serviceMeta); // 注册服务
-                rpcServiceMap.put(RpcServiceHelper.buildServiceKey(serviceName, serviceVersion), serviceMeta);
+                serviceRegistry.register(serviceMeta); // 注册服务元数据信息
+                // 缓存serviceBean对象
+                rpcServiceMap.put(RpcServiceHelper.buildServiceKey(serviceName, serviceVersion), bean);
 
             }catch (Exception e){
                 log.error("failed to register service {}#{}", serviceName, serviceVersion, e);
@@ -110,7 +111,7 @@ public class RpcProvider implements InitializingBean, BeanPostProcessor {
                             //2. 响应编码
                             pipeline.addLast(new CustomRpcEncoder());
                             //3. 请求处理
-                            pipeline.addLast(new RpcRequestHandler());
+                            pipeline.addLast(new RpcRequestHandler(rpcServiceMap));
                         }
                     }).childOption(ChannelOption.SO_KEEPALIVE, true);
             ChannelFuture channelFuture = serverBootstrap.bind(this.serviceAddress, this.servicePort).sync();

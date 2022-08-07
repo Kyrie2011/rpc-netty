@@ -18,7 +18,7 @@ public class RegistryFactory {
                 if (null == registryService) {
                     switch (type) {
                         case ZOOKEEPER:
-                            registryService = new ZookeeperRegistryService(registryAddress);  // 加上volatile，防止指令重拍
+                            registryService = new ZookeeperRegistryService(registryAddress);  // 加上volatile，防止指令重排
                             break;
                     }
                 }

@@ -10,6 +10,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rpc-consumer</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>cn.wanxh</groupId>
+            <artifactId>rpc-protocol</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.wanxh</groupId>
+            <artifactId>rpc-protocol</artifactId>
+        </dependency>
+    </dependencies>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
