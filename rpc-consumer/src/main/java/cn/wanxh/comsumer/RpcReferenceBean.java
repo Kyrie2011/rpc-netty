@@ -1,8 +1,13 @@
 package cn.wanxh.comsumer;
 
+import cn.wanxh.comsumer.proxy.RpcInvokerProxy;
 import cn.wanxh.registry.RegistryFactory;
+import cn.wanxh.registry.RegistryService;
+import cn.wanxh.registry.RegistryType;
 import com.sun.org.apache.xml.internal.security.Init;
 import org.springframework.beans.factory.FactoryBean;
+
+import java.lang.reflect.Proxy;
 
 /**
  * @program: rpc-netty
@@ -32,13 +37,19 @@ public class RpcReferenceBean implements FactoryBean<Object> {
 
     @Override
     public Class<?> getObjectType() {
-        return interfaceClass;
+        return interfaceClass;  // 标记哪些类可以通过该工厂bean来获取bean对象
     }
 
-    // init()方法 在构造？的时候填充/执行？
+    // init()方法被设置为initMethod,见builder.setInitMethodName(RpcConstants.INIT_METHOD_NAME);
     public void init() throws Exception{
         // 生成代理对象
-        // RegistryFactory.getInstance(this.registryAddress)
+        final RegistryService registryService = RegistryFactory.getInstance(this.registryAddress, RegistryType.valueOf(this.registryType));
+        this.object = Proxy.newProxyInstance(
+          interfaceClass.getClassLoader(),
+          new Class<?>[]{interfaceClass},
+          new RpcInvokerProxy(serviceVersion, timeout, registryService)
+        );
+
 
     }
 

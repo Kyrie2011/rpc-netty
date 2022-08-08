@@ -53,6 +53,7 @@ public class RpcConsumer {
         final Object[] params = request.getParams();
         final String serviceKey = RpcServiceHelper.buildServiceKey(request.getClassName(), request.getServiceVersion());
         int invokeHashCode = params.length > 0 ? params[0].hashCode() : serviceKey.hashCode();
+        // 服务发现 + 负载均衡
         final ServiceMeta serviceMeta = registryService.discovery(serviceKey, invokeHashCode);
 
         if (serviceMeta != null) {
