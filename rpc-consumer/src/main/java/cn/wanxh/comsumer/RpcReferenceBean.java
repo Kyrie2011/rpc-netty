@@ -42,15 +42,13 @@ public class RpcReferenceBean implements FactoryBean<Object> {
 
     // init()方法被设置为initMethod,见builder.setInitMethodName(RpcConstants.INIT_METHOD_NAME);
     public void init() throws Exception{
-        // 生成代理对象
         final RegistryService registryService = RegistryFactory.getInstance(this.registryAddress, RegistryType.valueOf(this.registryType));
+        // 生成代理对象
         this.object = Proxy.newProxyInstance(
           interfaceClass.getClassLoader(),
           new Class<?>[]{interfaceClass},
           new RpcInvokerProxy(serviceVersion, timeout, registryService)
         );
-
-
     }
 
     public void setInterfaceClass(Class<?> interfaceClass) {
