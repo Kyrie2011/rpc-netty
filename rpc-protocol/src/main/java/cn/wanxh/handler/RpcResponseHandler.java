@@ -17,7 +17,7 @@ public class RpcResponseHandler extends SimpleChannelInboundHandler<CustomRpcPro
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, CustomRpcProtocol<RpcResponse> msg) throws Exception {
         long requestId = msg.getHeader().getRequestId();
-        CustomRpcFuture<RpcResponse> future = RpcRequestHolder.REQUEST_MAP.remove(requestId);
+        CustomRpcFuture<RpcResponse> future = RpcRequestHolder.REQUEST_MAP.remove(requestId);  // 移除时机
         future.getPromise().setSuccess(msg.getMsgBody());
     }
 }

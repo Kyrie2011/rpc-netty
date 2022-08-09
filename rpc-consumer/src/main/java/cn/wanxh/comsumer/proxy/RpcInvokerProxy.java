@@ -62,6 +62,7 @@ public class RpcInvokerProxy implements InvocationHandler {
         final RpcConsumer rpcConsumer = new RpcConsumer(); // 每个请求都要new一次？ 或者加锁？ 或者使用ThreadLocal？ 避免同时多个请求出现的并发问题
         final CustomRpcFuture<RpcResponse> future = new CustomRpcFuture<>(new DefaultPromise<>(new DefaultEventLoop()), timeout);
         RpcRequestHolder.REQUEST_MAP.put(requestId, future);
+        // 发起请求
         rpcConsumer.sendRequest(protocol, this.registryService);
 
         return future.getPromise().get(future.getTimeout(), TimeUnit.SECONDS).getData();

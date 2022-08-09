@@ -68,6 +68,7 @@ public class RpcConsumer {
                 }
 
             });
+            // 写出数据
             future.channel().writeAndFlush(protocol);
 
         }
