@@ -1,5 +1,6 @@
 package cn.wanxh.registry;
 
+import cn.wanxh.core.RpcServiceHelper;
 import cn.wanxh.core.ServiceMeta;
 import cn.wanxh.registry.loadbalancer.ZKConsistentHashLoadBalancer;
 import org.I0Itec.zkclient.ZkClient;
@@ -44,13 +45,26 @@ public class ZookeeperRegistryService implements RegistryService{
 
     @Override
     public void register(ServiceMeta serviceMeta) throws Exception {
-
-
+        ServiceInstance<ServiceMeta> serviceInstance = ServiceInstance
+                .<ServiceMeta>builder()
+                .name(RpcServiceHelper.buildServiceKey(serviceMeta.getServiceName(), serviceMeta.getServiceVersion()))
+                .address(serviceMeta.getServiceAddress())
+                .port(serviceMeta.getServicePort())
+                .payload(serviceMeta)
+                .build();
+        serviceDiscovery.registerService(serviceInstance);
     }
 
     @Override
     public void unRegister(ServiceMeta serviceMeta) throws Exception {
-
+        ServiceInstance<ServiceMeta> serviceInstance = ServiceInstance
+                .<ServiceMeta>builder()
+                .name(serviceMeta.getServiceName())
+                .address(serviceMeta.getServiceAddress())
+                .port(serviceMeta.getServicePort())
+                .payload(serviceMeta)
+                .build();
+        serviceDiscovery.unregisterService(serviceInstance);
     }
 
     @Override
@@ -65,6 +79,6 @@ public class ZookeeperRegistryService implements RegistryService{
 
     @Override
     public void destroy() throws IOException {
-
+        serviceDiscovery.close();
     }
 }
