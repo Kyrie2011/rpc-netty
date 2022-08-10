@@ -59,7 +59,7 @@ public class RpcConsumerPostProcessor implements ApplicationContextAware, BeanCl
             if (context.containsBean(beanName)) {
                 throw new IllegalArgumentException("spring context already has a bean named " + beanName);
             }
-            // 注册
+            // 注册rpcRefBeanDefinitions
             registry.registerBeanDefinition(beanName, rpcRefBeanDefinitions.get(beanName));
             log.info("registered RpcReferenceBean {} success.", beanName);
         });
@@ -73,7 +73,9 @@ public class RpcConsumerPostProcessor implements ApplicationContextAware, BeanCl
             /**
              * 实例化前，扩展beanDefinition
              */
-            final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(RpcReferenceBean.class);
+            // 改变BeanClass为 RpcReferenceBean -> FactoryBean, getBean时 ->FactoryBean.getObject(), 便于返回自定义的Bean对象(代理对象)
+            final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(RpcReferenceBean.class); //beanDefinition.setBeanClass(RpcReferenceBean.class);
+            // 属性赋值
             builder.setInitMethodName(RpcConstants.INIT_METHOD_NAME);
             builder.addPropertyValue("interfaceClass", field.getType());  // 对应getObjectType，设置哪些类可以通过该工厂bean来获取bean对象
             builder.addPropertyValue("serviceVersion", annotation.serviceVersion());
@@ -82,6 +84,7 @@ public class RpcConsumerPostProcessor implements ApplicationContextAware, BeanCl
             builder.addPropertyValue("timeout", annotation.timeout());
 
             final AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
+            // 保存具有@RpcReference注解标识的BeanDefinition
             rpcRefBeanDefinitions.put(field.getName(), beanDefinition);
         }
 
@@ -92,4 +95,6 @@ public class RpcConsumerPostProcessor implements ApplicationContextAware, BeanCl
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.context = applicationContext;
     }
+
+
 }
