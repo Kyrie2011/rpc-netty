@@ -81,4 +81,8 @@ public class ZookeeperRegistryService implements RegistryService{
     public void destroy() throws IOException {
         serviceDiscovery.close();
     }
+
+    /**
+     * 实现服务优雅下线比较好的方式是采用主动通知 + 心跳检测的方案
+     */
 }
