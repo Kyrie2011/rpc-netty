@@ -10,6 +10,6 @@ public class Test3 {
         // 获取的是getObject方法返回的对象
         System.out.println(context.getBean("teacher"));
         // 获取的是getObject方法所属类的对象
-        //System.out.println(context.getBean("&teacher"));
+        System.out.println(context.getBean("&teacher"));
     }
 }
